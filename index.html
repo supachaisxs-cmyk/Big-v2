@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Big Mountain 2025 — Showtime Selector (6 Dec)</title>
+
+<!-- html2canvas for download -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* ----------------------- */
+/*      GLOBAL STYLE       */
+/* ----------------------- */
+:root{
+  --bg:#0f1115;
+  --panel:#0f1720;
+  --muted:#9aa5b1;
+  --accent:#ff4da6;
+  --glass: rgba(255,255,255,0.04);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+  background: linear-gradient(180deg,#07111b 0%, #0b1520 100%);
+  color:#e6eef6;
+  -webkit-font-smoothing:antialiased;
+}
+
+.wrap{
+  max-width:1100px;
+  margin:18px auto;
+  padding:18px;
+}
+
+/* ----------------------- */
+/* HEADER */
+/* ----------------------- */
+header {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  justify-content:space-between;
+  margin-bottom:14px;
+}
+h1{
+  font-size:20px;
+  margin:0;
+  font-weight:700;
+  letter-spacing:0.2px;
+}
+.date-pill{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+.pill{
+  background:var(--glass);
+  color:var(--muted);
+  padding:8px 12px;
+  border-radius:999px;
+  font-weight:600;
+  cursor:pointer;
+  font-size:13px;
+}
+.pill.active{
+  background:linear-gradient(90deg,var(--accent),#a244ff);
+  color:#0b0b0b;
+  box-shadow:0 6px 22px rgba(255,77,166,0.12),0 2px 6px rgba(0,0,0,0.5);
+}
+
+/* ----------------------- */
+/* LAYOUT */
+/* ----------------------- */
+.main{
+  display:grid;
+  grid-template-columns: 1fr 320px;
+  gap:18px;
+}
+
+/* TIMELINE PANEL */
+.timeline-panel{
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius:14px;
+  padding:14px;
+  box-shadow: 0 6px 24px rgba(3,6,10,0.6);
+  overflow:hidden;
+}
+
+.time-header{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:12px;
+}
+.time-range{
+  background:var(--panel);
+  padding:8px 12px;
+  border-radius:10px;
+  color:var(--muted);
+  font-weight:600;
+  font-size:14px;
+}
+
+.timeline-wrap{
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
+  padding-bottom:6px;
+}
+.timeline{
+  min-width:900px;
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+}
+
+/* TIME COLUMN */
+.time-column{
+  width:72px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.time-label{
+  height:56px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--muted);
+  font-weight:700;
+  font-size:13px;
+}
+
+/* STAGE */
+.stage-row{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+}
+.stage-name{
+  min-width:180px;
+  color:#cfe6ff;
+  font-weight:700;
+  font-size:14px;
+  padding:12px;
+  border-radius:10px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+}
+
+/* ARTIST CHIP */
+.chip{
+  border-radius:20px;
+  padding:10px 12px;
+  min-width:140px;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  justify-content:center;
+  color:#061019;
+  font-weight:700;
+  cursor:pointer;
+  transition:.12s;
+  box-shadow:0 3px 10px rgba(2,6,12,0.45);
+  white-space:nowrap;
+  font-size:13px;
+}
+.chip .meta{
+  font-size:12px;
+  color:rgba(0,0,0,.6);
+}
+
+.chip:hover{
+  transform:translateY(-4px);
+}
+
+/* STAGE COLORS */
+.stage-ferris .chip{ background:linear-gradient(90deg,#7fe3c4,#5bd0ff);}
+.stage-block .chip{ background:linear-gradient(90deg,#ffb3c7,#ff7aa6);}
+.stage-red .chip{ background:linear-gradient(90deg,#ffb06b,#ff7d4c);}
+.stage-harn .chip{ background:linear-gradient(90deg,#ffd86a,#ffb36b);}
+.stage-district .chip{ background:linear-gradient(90deg,#8fd6ff,#6fa0ff);}
+.stage-lang .chip{ background:linear-gradient(90deg,#ff9fb3,#e76fff);}
+.stage-rum .chip{ background:linear-gradient(90deg,#caa8ff,#a8b6ff);}
+
+.chip.selected{
+  outline:3px solid rgba(255,255,255,0.06);
+  transform:translateY(-6px) scale(1.02);
+}
+
+/* SUMMARY PANEL */
+.summary{
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  padding:14px;
+  border-radius:14px;
+  position:sticky;
+  top:18px;
+}
+.summary h3{
+  margin:0 0 8px;
+  font-size:16px;
+  color:#f2f7ff;
+}
+.sel-list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  max-height:62vh;
+  overflow:auto;
+}
+.sel-item{
+  background:var(--glass);
+  padding:8px 10px;
+  border-radius:10px;
+  display:flex;
+  justify-content:space-between;
+  color:#fff;
+}
+
+/* MOBILE */
+@media(max-width:980px){
+  .main{ grid-template-columns:1fr;}
+}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+<header>
+  <h1>Big Mountain 2025 — Showtime Selector</h1>
+  <div class="date-pill">
+    <div class="pill active">6 ธ.ค. 2025</div>
+  </div>
+</header>
+
+<div class="main">
+<div class="timeline-panel">
+
+  <div class="time-header">
+    <div class="time-range">เวลา: 13:00 — 24:00</div>
+    <div style="flex:1"></div>
+    <div class="muted">กดชื่อวงเพื่อเพิ่มลงตารางส่วนตัว</div>
+  </div>
+
+  <div class="timeline-wrap">
+    <div class="timeline">
+
+<!-- LEFT TIME COLUMN -->
+<div style="min-width:180px; display:flex; flex-direction:column;">
+  <div style="height:56px"></div>
+  <div class="time-label" style="height:44px;">เวลา</div>
+  <div class="time-column">
+    <div class="time-label">13:00</div>
+    <div class="time-label">14:00</div>
+    <div class="time-label">15:00</div>
+    <div class="time-label">16:00</div>
+    <div class="time-label">17:00</div>
+    <div class="time-label">18:00</div>
+    <div class="time-label">19:00</div>
+    <div class="time-label">20:00</div>
+    <div class="time-label">21:00</div>
+    <div class="time-label">22:00</div>
+    <div class="time-label">23:00</div>
+    <div class="time-label">24:00</div>
+  </div>
+</div>
+
+<!-- STAGES COLUMN -->
+<div style="display:flex; flex-direction:column; gap:14px;">
+
+<!-- FERRIS -->
+<div class="stage-row stage-ferris">
+  <div class="stage-name">FERRIS WHEEL STAGE</div>
+  <div style="display:flex; flex-wrap:wrap; gap:10px">
+    <div class="chip" data-artist="SLOT MACHINE" data-time="16:45-17:45">SLOT MACHINE<div class="meta">16:45 — 17:45</div></div>
+    <div class="chip" data-artist="LOMOSONIC" data-time="18:00-19:00">LOMOSONIC<div class="meta">18:00 — 19:00</div></div>
+    <div class="chip" data-artist="BANK PREETI" data-time="19:45-20:15">BANK PREETI<div class="meta">19:45 — 20:15</div></div>
+    <div class="chip" data-artist="POTATO" data-time="21:45-22:45">POTATO<div class="meta">21:45 — 22:45</div></div>
+    <div class="chip" data-artist="BODYSLAM" data-time="23:00-00:00">BODYSLAM<div class="meta">23:00 — 00:00</div></div>
+  </div>
+</div>
+
+<!-- BLOCK -->
+<div class="stage-row stage-block">
+  <div class="stage-name">BLOCK STAGE</div>
+  <div style="display:flex; flex-wrap:wrap; gap:10px">
+    <div class="chip">SAMUI<div class="meta">16:15 — 17:00</div></div>
+    <div class="chip">WOLF HOWL HARMONY<div class="meta">17:15 — 17:45</div></div>
+    <div class="chip">DIVA LA VIE<div class="meta">18:00 — 18:30</div></div>
+    <div class="chip">JAYLERR<div class="meta">18:45 — 19:45</div></div>
+    <div class="chip">FOURTH<div class="meta">20:15 — 20:45</div></div>
+    <div class="chip">PROXIE<div class="meta">21:00 — 21:45</div></div>
+    <div class="chip">PERSES<div class="meta">22:00 — 22:45</div></div>
+    <div class="chip">LYKN<div class="meta">23:15 — 23:55</div></div>
+  </div>
+</div>
+
+<!-- RED -->
+<div class="stage-row stage-red">
+  <div class="stage-name">RED (REO) STAGE</div>
+  <div style="display:flex; flex-wrap:wrap; gap:10px">
+    <div class="chip">TILLY BIRDS<div class="meta">16:10 — 16:55</div></div>
+    <div class="chip">PUN<div class="meta">17:10 — 17:55</div></div>
+    <div class="chip">CLWP<div class="meta">18:10 — 18:55</div></div>
+    <div class="chip">POLYCAT<div class="meta">19:10 — 19:55</div></div>
+    <div class="chip">SCRUBB<div class="meta">20:10 — 20:55</div></div>
+    <div class="chip">TATTOO COLOUR<div class="meta">21:10 — 21:55</div></div>
+    <div class="chip">TIMETHAI<div class="meta">22:10 — 22:55</div></div>
+    <div class="chip">URBOYTJ<div class="meta">23:10 — 23:55</div></div>
+  </div>
+</div>
+
+<!-- HARN -->
+<div class="stage-row stage-harn">
+  <div class="stage-name">HARN STAGE (BY PEPSI)</div>
+  <div style="display:flex; flex-wrap:wrap; gap:10px">
+    <div class="chip">SERIOUS BACON<div class="meta">13:00 — 13:45</div></div>
+    <div class="chip">TRANCE EFFECT<div class="meta">14:15 — 15:00</div></div>
+    <div class="chip">GUNCHARLIE<div class="meta">15:30 — 16:15</div></div>
+    <div class="chip">JAMES ALYN<div class="meta">18:00 — 18:45</div></div>
+    <div class="chip">WHAL & DOLPH<div class="meta">19:15 — 20:00</div></div>
+    <div class="chip">MIRRR<div class="meta">20:30 — 21:15</div></div>
+    <div class="chip">SAFEPLANET<div class="meta">21:45 — 22:30</div></div>
+    <div class="chip">THE TOYS<div class="meta">23:00 — 23:45</div></div>
+  </div>
+</div>
+
+<!-- END STAGES -->
+</div>
+
+</div>
+</div>
+
+<!-- SUMMARY PANEL -->
+<div class="summary">
+  <h3>ตารางของฉัน</h3>
+  <div class="sel-list" id="selList"></div>
+</div>
+
+</div>
+</div>
+
+<script>
+// SELECT CHIP
+document.querySelectorAll('.chip').forEach(chip=>{
+  chip.addEventListener('click',()=>{
+    chip.classList.toggle('selected');
+
+    const name=chip.textContent.trim();
+    const time=chip.querySelector('.meta').textContent;
+
+    if(chip.classList.contains('selected')){
+      addItem(name,time);
+    }else{
+      removeItem(name);
+    }
+  });
+});
+
+function addItem(name,time){
+  const box=document.createElement('div');
+  box.className='sel-item';
+  box.dataset.name=name;
+  box.innerHTML=`<span>${name}</span><span>${time}</span>`;
+  document.getElementById('selList').appendChild(box);
+}
+function removeItem(name){
+  document.querySelectorAll('.sel-item').forEach(i=>{
+    if(i.dataset.name===name) i.remove();
+  });
+}
+</script>
+
+</body>
+</html>
